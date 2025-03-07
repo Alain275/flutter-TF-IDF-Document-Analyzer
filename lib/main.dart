@@ -29,13 +29,6 @@ class TFIDFApp extends StatelessWidget {
         brightness: Brightness.light,    // Light mode
         useMaterial3: true,              // Use Material 3 design
       ),
-      // Dark theme configuration
-      darkTheme: ThemeData(
-        primarySwatch: Colors.blue,      // Primary color palette
-        brightness: Brightness.dark,     // Dark mode
-        useMaterial3: true,              // Use Material 3 design
-      ),
-      themeMode: ThemeMode.system,       // Follow system theme setting
       home: const DocumentAnalyzerScreen(), // Initial screen/route
     );
   }
@@ -116,7 +109,7 @@ class _DocumentAnalyzerScreenState extends State<DocumentAnalyzerScreen> {
     // Open file picker dialog with web-specific options
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,                 // Only allow specific file types
-      allowedExtensions: ['txt', 'md', 'pdf'], // Allowed file extensions
+      allowedExtensions: ['txt', 'pdf','docs'], // Allowed file extensions
       allowMultiple: true,                  // Allow multiple file selection
       withData: true,                       // Important: request bytes data for web
     );
@@ -161,7 +154,7 @@ class _DocumentAnalyzerScreenState extends State<DocumentAnalyzerScreen> {
     // Open file picker dialog with native-specific options
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,                 // Only allow specific file types
-      allowedExtensions: ['txt', 'md', 'pdf'], // Allowed file extensions
+      allowedExtensions: ['txt', 'pdf','docs'], // Allowed file extensions
       allowMultiple: true,                  // Allow multiple file selection
     );
 
@@ -249,7 +242,8 @@ class _DocumentAnalyzerScreenState extends State<DocumentAnalyzerScreen> {
         double tf = termFrequency[term]! / words.length;
         
         // Inverse document frequency (IDF): log(total docs / docs containing term)
-        double idf = log(_documents.length / (documentFrequency[term] ?? 1));
+        double idf = log(_documents.length / max(1, documentFrequency[term] ?? 1).toDouble());
+
         
         // TF-IDF is the product of TF and IDF
         tfIdfValues[term] = tf * idf;
